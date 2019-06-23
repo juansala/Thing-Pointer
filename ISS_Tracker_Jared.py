@@ -2,11 +2,18 @@
 # Uses PyEphem Package to compute the position of the ISS 
 # and to write it in terms of altitude (degrees above horizon, +N) and azimuth (degrees along horizon, +E) 
 # Altitude & Azimuth are measured from a particular location at a particular time (the observer)
+# Sends message w/ altitude and azimuth to Arduino via UART
 
+import serial
 import math
 import time
 from datetime import datetime
 import ephem
+
+ser = serial.Serial("COM13",9600) #initializes connection with the arduino
+time.sleep(5.0)
+
+
 home = ephem.Observer()
 # Long. and Lat. of observer
 home.lon, home.lat = '-71.19', '42.42'
@@ -25,7 +32,12 @@ iss = ephem.readtle("ISS (ZARYA)",
 while True:
 	home.date = datetime.now()
 	iss.compute(home)
-	print('Altitude: %f - Azimuth: %f' % (math.degrees(iss.alt), math.degrees(iss.az)))
-# print("%s %s" % (ephem.degrees(iss.sublong), ephem.degrees(iss.sublat)))
+	alt = math.degrees(iss.alt)
+	az = math.degrees(iss.az)
+	string_pos = str(alt) + " " + str(az)
+	# print("%s %s" % (ephem.degrees(iss.sublong), ephem.degrees(iss.sublat)))
+	ser.write(string_pos)
+	ser.flush()
+	print('Altitude: %f - Azimuth: %f' % (alt, az)
 	print(home.date)
 	time.sleep(1) 
