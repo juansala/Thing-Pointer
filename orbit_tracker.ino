@@ -1,3 +1,9 @@
+/* Juan Salazar 6/23/2019
+ * Teensy 3.2 firmware for the Thing Pointer v1.
+ * Receives commands via Serial/UART from w/ RPi.
+ * Tracks the International Space Station (ISS).
+ */
+
 #include <Servo.h>
 #define coil_A_1_pin  23
 #define coil_A_2_pin  22
@@ -23,7 +29,10 @@ void setup() {
   pinMode(22, OUTPUT);
   pinMode(21, OUTPUT);
   pinMode(20, OUTPUT);
+
+  // Stepper check 
   forward(50, 20);
+  delay(500);
   backwards(50, 20);
   
 }
