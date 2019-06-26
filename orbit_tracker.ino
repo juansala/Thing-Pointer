@@ -16,7 +16,8 @@ int servo_pin = 9;
 int enable_pin = 18;
 int stepDelay = 10;
 int sprockRatio = 0;
-float deg2step = 0;
+float deg2step = 360/200;
+
 
 // Ephem variables
 float az; // reported azimuth
