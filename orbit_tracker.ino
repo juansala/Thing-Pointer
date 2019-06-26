@@ -17,11 +17,14 @@ int enable_pin = 18;
 int stepDelay = 10;
 int sprockRatio = 0;
 float deg2step = 360/200;
+int dt = 50;
 
 
 // Ephem variables
 float az; // reported azimuth
 float alt; //reported altitude
+float oldAz;
+float steps;
 
 void setup() {
   Serial.begin(9600);
@@ -39,14 +42,33 @@ void setup() {
 }
 
 void loop() {
-//  while (Serial.available())  {
-//    alt = Serial.parseFloat();
-//    az = Serial.parseFloat();
-//    Serial.flush();
-//    Serial.print(alt);
-//    Serial.print(' ');
-//    Serial.println(az);
-//    } 
+  while (Serial.available())  {
+    alt = Serial.parseFloat();
+    az = Serial.parseFloat();
+    Serial.flush();
+    Serial.print(alt);
+    Serial.print(' ');
+    Serial.println(az);
+
+    if (az < 0){
+      az = (360 - abs(az));
+      steps = sprockRatio * deg2step * (az - oldAz);
+    }
+    else {
+      steps = sprockRatio * deg2step * (az - oldAz);
+    }
+      
+    if (steps < 0){
+      backwards(dt, abs(steps));
+    }
+    else {
+      forward(dt, abs(steps));
+    }
+    
+    oldAz = az;
+    arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
+    
+    } 
   
 }
 
