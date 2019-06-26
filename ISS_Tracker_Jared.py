@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 import ephem
 
-ser = serial.Serial("COM13",9600) #initializes connection with the arduino
+ser = serial.Serial('/dev/serial0',9600) #initializes connection with the arduino
 time.sleep(5.0)
 
 
