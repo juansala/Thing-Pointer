@@ -38,6 +38,6 @@ while True:
 	# print("%s %s" % (ephem.degrees(iss.sublong), ephem.degrees(iss.sublat)))
 	ser.write(string_pos)
 	ser.flush()
-	print('Altitude: %f - Azimuth: %f' % (alt, az)
+	print('Altitude: %f - Azimuth: %f' % (alt, az))
 	print(home.date)
 	time.sleep(1) 
