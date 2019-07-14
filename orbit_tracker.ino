@@ -9,8 +9,8 @@
 #define coil_A_2_pin  22
 #define coil_B_1_pin  21
 #define coil_B_2_pin  20
-
-
+#define HWSERIAL Serial1 //UART from pins 1 and 0 on Teensy 3.2
+  
 Servo arrow;
 int servo_pin = 9;
 int enable_pin = 18;
@@ -18,9 +18,11 @@ int stepDelay = 10;
 int sprockRatio = 0;
 float deg2step = 360/200;
 int dt = 50;
+int led = 13;
 
 
 // Ephem variables
+String incoming; // rpi incoming message
 float az; // reported azimuth
 float alt; //reported altitude
 float oldAz;
@@ -28,6 +30,7 @@ float steps;
 
 void setup() {
   Serial.begin(9600);
+  HWSERIAL.begin(9600);
   arrow.attach(servo_pin);  
   pinMode(23, OUTPUT);
   pinMode(22, OUTPUT);
@@ -42,14 +45,20 @@ void setup() {
 }
 
 void loop() {
-  while (Serial.available())  {
-    alt = Serial.parseFloat();
-    az = Serial.parseFloat();
-    Serial.flush();
+  while (HWSERIAL.available())  {
+    incoming = HWSERIAL.readString();
+    HWSERIAL.flush();
+    Serial.println(incoming);
+    
+
+    /*
     Serial.print(alt);
     Serial.print(' ');
     Serial.println(az);
+    digitalWrite(led, HIGH);
+*/
 
+  /*
     if (az < 0){
       az = (360 - abs(az));
       steps = sprockRatio * deg2step * (az - oldAz);
@@ -64,9 +73,12 @@ void loop() {
     else {
       forward(dt, abs(steps));
     }
+
+    */
     
-    oldAz = az;
-    arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
+    //oldAz = az;
+    //arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
+
     
     } 
   
