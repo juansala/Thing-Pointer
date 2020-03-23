@@ -4,14 +4,14 @@
 # Altitude & Azimuth are measured from a particular location at a particular time (the observer)
 # Sends message w/ altitude and azimuth to Arduino via UART
 
+import ephem
 import serial
 import math
 import time
 from datetime import datetime
-import ephem
-
-ser = serial.Serial('/dev/serial0',9600) #initializes connection with the arduino
-time.sleep(5.0)
+	
+ser = serial.Serial('/dev/ttyAMA0',9600) #initializes connection with the arduino
+#time.sleep(5.0)
 
 
 home = ephem.Observer()
