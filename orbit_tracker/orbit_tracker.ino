@@ -38,7 +38,17 @@ void setup() {
   forward(50, 20);
   delay(500);
   backwards(50, 20);
-  
+
+  //Servo check
+  for (int pos = 0; pos <= 120; pos += 1) { 
+    // in steps of 1 degree
+    arrow.write(pos);              
+    delay(100);                       
+  }
+  for (int pos = 180; pos >= 0; pos -= 1) { 
+    arrow.write(pos);              
+    delay(100);                       
+  }
 }
 
 void loop() {
