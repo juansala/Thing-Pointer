@@ -5,29 +5,40 @@
  */
 
 #include <Servo.h>
+#define HWSERIAL Serial1 //UART from pins 1 and 0 on Teensy 3.2
+
+// Stepper motor pins
 #define coil_A_1_pin  23
 #define coil_A_2_pin  22
 #define coil_B_1_pin  21
 #define coil_B_2_pin  20
 
+// Variables for incoming serial messages
+double values[2];
+char buf[50];
+String incoming; 
 
+// Servo Teensy pins
 Servo arrow;
 int servo_pin = 9;
 int enable_pin = 18;
+
+// Stepper & power transmission parameters
 int stepDelay = 10;
-int sprockRatio = 0;
+int sprockRatio = 1;
 float deg2step = 360/200;
 int dt = 50;
 
 
 // Ephem variables
-float az; // reported azimuth
-float alt; //reported altitude
-float oldAz;
-float steps;
+double az; // reported azimuth
+double alt; //reported altitude
+double oldAz;
+double steps;
 
 void setup() {
   Serial.begin(9600);
+  HWSERIAL.begin(9600);
   arrow.attach(servo_pin);  
   pinMode(23, OUTPUT);
   pinMode(22, OUTPUT);
@@ -52,31 +63,33 @@ void setup() {
 }
 
 void loop() {
-  while (Serial.available())  {
-    alt = Serial.parseFloat();
-    az = Serial.parseFloat();
-    Serial.flush();
-    Serial.print(alt);
-    Serial.print(' ');
-    Serial.println(az);
+  while (HWSERIAL.available())  {
+    incoming = HWSERIAL.readStringUntil('\n');
+    HWSERIAL.flush();
+//    Serial.println(incoming);
+    incoming.toCharArray(buf, 50);
+    num_extractor(buf, values, ',');
+    dispValues();
+    alt = values[0];
+    az = values[1];
 
-    if (az < 0){
-      az = (360 - abs(az));
-      steps = sprockRatio * deg2step * (az - oldAz);
-    }
-    else {
-      steps = sprockRatio * deg2step * (az - oldAz);
-    }
-      
-    if (steps < 0){
-      backwards(dt, abs(steps));
-    }
-    else {
-      forward(dt, abs(steps));
-    }
-    
-    oldAz = az;
-    arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
+//    if (az < 0){
+//      az = (360 - abs(az));
+//      steps = sprockRatio * deg2step * (az - oldAz);
+//    }
+//    else {
+//      steps = sprockRatio * deg2step * (az - oldAz);
+//    }
+//      
+//    if (steps < 0){
+//      backwards(dt, abs(steps));
+//    }
+//    else {
+//      forward(dt, abs(steps));
+//    }
+//    
+//    oldAz = az;
+//    arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
     
     } 
   
@@ -118,4 +131,26 @@ void backwards(int dt, int steps){
     setStep(1, 0, 0, 0);
     delay(dt);
   }
+}
+
+// num_extractor parses incoming string for comma-separated values (alt and az)
+void num_extractor(char* data_array, double* output_values, char delimiter) {
+    char* ptr;
+    char* delPointer = &delimiter;
+    ptr = strtok(data_array, delPointer);
+    int i = 0;
+    while (ptr != NULL){
+    output_values[i] = atof(ptr);
+    ptr = strtok(NULL, delPointer);
+    i++;
+    }
+}
+
+// For debugging serial messages
+void dispValues(){
+  for (int i = 0; i < 4; i++){
+    Serial.print(values[i]);
+    Serial.print(",");
+  }
+  Serial.println();
 }
