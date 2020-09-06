@@ -14,7 +14,7 @@ from datetime import datetime
 ser = serial.Serial('/dev/serial0',9600) #initializes connection with the arduino
 #time.sleep(5.0)
 
-lastPullTime = 0
+lastPullTime = time()
 
 home = ephem.Observer()
 # Long. and Lat. of observer
@@ -42,6 +42,7 @@ while True:
         if time() - lastPullTime > 30*60: # If 30 min passed since last TLE update, update it 
             r = requests.get("""https://www.celestrak.com/NORAD/elements/stations.txt""")
             #print r.text[0:167]
+            #print "Pulled TLE!"
             iss = ephem.readtle(str(r.text[0:11]), str(r.text[26:95]), str(r.text[97:167]))
             lastPullTime = time()
 
