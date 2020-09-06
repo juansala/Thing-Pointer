@@ -26,7 +26,7 @@ int enable_pin = 18;
 // Stepper & power transmission parameters
 int stepDelay = 10;
 int sprockRatio = 1;
-float deg2step = 360/200;
+float degPerstep = 360/200;
 int dt = 50;
 
 
@@ -46,9 +46,9 @@ void setup() {
   pinMode(20, OUTPUT);
 
   // Stepper check 
-//  forward(50, 20);
-//  delay(500);
-//  backwards(50, 20);
+  forward(50, 20);
+  delay(500);
+  backwards(50, 20);
 
   //Servo check
 //  for (int pos = 0; pos <= 120; pos += 1) { 
@@ -69,30 +69,33 @@ void loop() {
 //    Serial.println(incoming);
     incoming.toCharArray(buf, 50);
     num_extractor(buf, values, ',');
-    dispValues();
+//    dispValues();
     alt = values[0];
     az = values[1];
 
-//    if (az < 0){
-//      az = (360 - abs(az));
-//      steps = sprockRatio * deg2step * (az - oldAz);
-//    }
-//    else {
-//      steps = sprockRatio * deg2step * (az - oldAz);
-//    }
-//      
-//    if (steps < 0){
-//      backwards(dt, abs(steps));
-//    }
-//    else {
-//      forward(dt, abs(steps));
-//    }
-//    
-//    oldAz = az;
-//    arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
+    if (az < 0){
+      az = (360 - abs(az)); // convert TLE reported azimuth to 0-360 range
+      steps = sprockRatio * 1/degPerstep * (az - oldAz);
+    }
+    else {
+      steps = sprockRatio * 1/degPerstep * (az - oldAz);
+    }
+      
+    if (steps < 0){
+      backwards(dt, abs(int(steps)));
+    }
+    else {
+      forward(dt, abs(int(steps)));
+    }
+
+    Serial.println(int(steps));
     
+    oldAz = az;
+    arrow.write(map(alt, -90, 90, 0, 180));
+    //arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
+    delay(50);
     } 
-  
+    
 }
 
 
@@ -108,7 +111,7 @@ void setStep(boolean first, boolean sec, boolean third, boolean fourth){
 }
 
 void forward(int dt, int steps){
-  for (int i  = 0; i <= steps; i++){
+  for (int i  = 0; i < steps; i++){
     setStep(1, 0, 0, 0);
     delay(dt);
     setStep(0, 1, 0, 0);
@@ -121,7 +124,7 @@ void forward(int dt, int steps){
 }
 
 void backwards(int dt, int steps){
-  for (int i = 0; i <= steps; i++){
+  for (int i = 0; i < steps; i++){
     setStep(0, 0, 0, 1);
     delay(dt);
     setStep(0, 0, 1, 0);
