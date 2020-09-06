@@ -58,4 +58,4 @@ while True:
 	ser.flush()
 	print('Altitude: %f - Azimuth: %f' % (alt, az))
 	print(home.date)
-	sleep(1)
+	sleep(30)
