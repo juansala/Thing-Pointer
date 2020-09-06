@@ -26,8 +26,8 @@ int enable_pin = 18;
 // Stepper & power transmission parameters
 int stepDelay = 10;
 int sprockRatio = 1;
-float degPerstep = 360/200;
-int dt = 50;
+float degPerstep = 360.0/200.0;
+int dt = 10;
 
 
 // Ephem variables
@@ -75,25 +75,27 @@ void loop() {
 
     if (az < 0){
       az = (360 - abs(az)); // convert TLE reported azimuth to 0-360 range
-      steps = sprockRatio * 1/degPerstep * (az - oldAz);
+      steps = int(sprockRatio * 1/degPerstep * (az - oldAz));
     }
     else {
-      steps = sprockRatio * 1/degPerstep * (az - oldAz);
+      steps = int(sprockRatio * 1/degPerstep * (az - oldAz));
     }
-      
+    Serial.println(steps);
+        
     if (steps < 0){
-      backwards(dt, abs(int(steps)));
+      backwards(dt, abs(steps));
     }
-    else {
-      forward(dt, abs(int(steps)));
+    else if (steps > 0){
+      forward(dt, abs(steps));
+    }
+    else{
+      break;
     }
 
-    Serial.println(int(steps));
     
     oldAz = az;
     arrow.write(map(alt, -90, 90, 0, 180));
     //arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
-    delay(50);
     } 
     
 }
