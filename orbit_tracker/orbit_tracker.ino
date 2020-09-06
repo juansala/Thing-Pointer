@@ -46,20 +46,20 @@ void setup() {
   pinMode(20, OUTPUT);
 
   // Stepper check 
-  forward(50, 20);
-  delay(500);
-  backwards(50, 20);
+//  forward(50, 20);
+//  delay(500);
+//  backwards(50, 20);
 
   //Servo check
-  for (int pos = 0; pos <= 120; pos += 1) { 
-    // in steps of 1 degree
-    arrow.write(pos);              
-    delay(100);                       
-  }
-  for (int pos = 180; pos >= 0; pos -= 1) { 
-    arrow.write(pos);              
-    delay(100);                       
-  }
+//  for (int pos = 0; pos <= 120; pos += 1) { 
+//    // in steps of 1 degree
+//    arrow.write(pos);              
+//    delay(100);                       
+//  }
+//  for (int pos = 180; pos >= 0; pos -= 1) { 
+//    arrow.write(pos);              
+//    delay(100);                       
+//  }
 }
 
 void loop() {
@@ -148,7 +148,7 @@ void num_extractor(char* data_array, double* output_values, char delimiter) {
 
 // For debugging serial messages
 void dispValues(){
-  for (int i = 0; i < 4; i++){
+  for (int i = 0; i < 2; i++){
     Serial.print(values[i]);
     Serial.print(",");
   }
