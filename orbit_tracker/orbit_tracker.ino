@@ -46,9 +46,9 @@ void setup() {
   pinMode(20, OUTPUT);
 
   // Stepper check 
-  forward(10, 50);
+  forward(50, 56);
   delay(500);
-  backwards(10, 50);
+  backwards(50, 56);
 
   //Servo check
 //  for (int pos = 0; pos <= 120; pos += 1) { 
