@@ -18,7 +18,8 @@ lastPullTime = time()
 
 home = ephem.Observer()
 # Long. and Lat. of observer
-home.lon, home.lat = '-71.19', '42.42'
+#home.lon, home.lat = '-71.19', '42.42'
+home.lon, home.lat = '-80.1918', '25.7617'
 # Boston Long and Lat: '-71.19', '42.42'
 # Miami Long and Lat: '-80.1918' , '25.7617'   
 # Approximate elevation of observer in meters
