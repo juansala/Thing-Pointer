@@ -32,7 +32,7 @@ int enable_pin = 18;
 // Stepper & power transmission parameters
 int stepDelay = 10;
 int sprockRatio = 1;
-float degPerstep = 360.0/50.0;
+float degPerstep = 360.0/200.0;
 int dt = 10;
 int state = 1;
 bool motorDir = NULL;
@@ -53,9 +53,9 @@ void setup() {
   pinMode(20, OUTPUT);
 
   // Stepper check 
-  forward(50, 56);
+  stepForward(50, 200);
   delay(500);
-  backwards(50, 56);
+  stepBackward(50, 200);
 
   //Servo check
 //  for (int pos = 0; pos <= 120; pos += 1) { 
@@ -90,10 +90,10 @@ void loop() {
     Serial.println(steps);
         
     if (steps < 0.0){
-      backwards(dt, abs(steps));
+      stepBackward(dt, abs(steps));
     }
     else if (steps > 0.0){
-      forward(dt, abs(steps));
+      stepForward(dt, abs(steps));
     }
     else{
       break;
