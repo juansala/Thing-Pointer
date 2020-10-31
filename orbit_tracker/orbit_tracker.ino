@@ -13,6 +13,12 @@
 #define coil_B_1_pin  21
 #define coil_B_2_pin  20
 
+// Stepper motor states
+#define FIRST 1
+#define SECOND 2
+#define THIRD 3
+#define FOURTH 4
+
 // Variables for incoming serial messages
 double values[2];
 char buf[50];
@@ -28,7 +34,8 @@ int stepDelay = 10;
 int sprockRatio = 1;
 float degPerstep = 360.0/50.0;
 int dt = 10;
-
+int state = 1;
+bool motorDir = NULL;
 
 // Ephem variables
 double az; // reported azimuth
@@ -137,6 +144,61 @@ void backwards(int dt, int steps){
     delay(dt);
   }
 }
+
+// TESTING: Microstepping below
+
+void stepperFSM(bool dir){
+  if (motorDir != NULL && motorDir != dir)
+    state = FIRST;
+  motorDir = dir;
+  switch(state){
+    case FIRST:
+      if (motorDir)
+        setStep(1, 0, 0, 0);
+      else 
+        setStep(0, 0, 0, 1);
+      state = SECOND;
+      break;
+    case SECOND:
+      if (motorDir)
+        setStep(0, 1, 0, 0);
+      else
+        setStep(0, 0, 1, 0);
+      state = THIRD;
+      break;
+    case THIRD:
+      if (motorDir)
+        setStep(0, 0, 1, 0);
+      else
+        setStep(0, 1, 0, 0);
+      state = FOURTH;
+      break;
+    case FOURTH:
+      if (motorDir)
+        setStep(0, 0, 0, 1);
+      else
+        setStep(1, 0, 0, 0);
+      state = FIRST;
+      break;
+  }
+}
+
+void stepForward(int dt, int steps){
+  for (int i  = 0; i < steps; i++){
+    stepperFSM(true);
+    delay(dt);
+  }
+}
+
+void stepBackward(int dt, int steps){
+  for (int i  = 0; i < steps; i++){
+    stepperFSM(false);
+    delay(dt);
+  }
+}
+/*
+ * Serial message/String parser
+ */
 
 // num_extractor parses incoming string for comma-separated values (alt and az)
 void num_extractor(char* data_array, double* output_values, char delimiter) {
