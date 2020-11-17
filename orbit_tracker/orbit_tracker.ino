@@ -58,15 +58,15 @@ void setup() {
   stepBackward(50, 200);
 
   //Servo check
-//  for (int pos = 0; pos <= 120; pos += 1) { 
-//    // in steps of 1 degree
-//    arrow.write(pos);              
-//    delay(100);                       
-//  }
-//  for (int pos = 180; pos >= 0; pos -= 1) { 
-//    arrow.write(pos);              
-//    delay(100);                       
-//  }
+  for (int pos = 0; pos <= 120; pos += 1) { 
+    // in steps of 1 degree
+    arrow.write(pos);              
+    delay(100);                       
+  }
+  for (int pos = 120; pos >= 0; pos -= 1) { 
+    arrow.write(pos);              
+    delay(100);                       
+  }
 }
 
 void loop() {
@@ -101,7 +101,7 @@ void loop() {
 
     
     oldAz = az;
-    arrow.write(map(alt, -90, 90, 0, 180));
+    arrow.write(map(alt, -90, 90, 0, 120));
     //arrow.write(alt + 90); //set -90 from reported altitude to 0 servo pos
     } 
     
